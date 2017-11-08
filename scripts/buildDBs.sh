@@ -20,21 +20,25 @@ case "${1}" in #switch case for the program's argument
                     if [ ! -f $dbNameTV ]; then #creates the dbfile if missing
                         touch $dbNameTV;
                     fi
-                    if ! grep -q ${file} $dbNameTV; then #check if file is already present in database
-                                        ./parseTVfilename.sh $file	#parses through $file, adds it to database
+                    fileName=${file#../}
+                    isPresent=$(grep -c "${fileName}" $dbNameTV)
+                    if [ "$isPresent" -eq "0" ]; then #check if file is already present in database
+	                ./parseTVfilename.sh $file	#parses through $file, adds it to database
                     fi
 		done
 		;;
 	"3")
 		find $MoviesPath -iname "*.mp4" -exec ./parseMfilename.sh {} \; &
 		pid1=$!
-		if [ ! -f $dbNameTV ]; then #creates the dbfile if missing
-                	touch $dbNameTV;
-		fi
 		find $TVpath -name "*.mp4"| sort | while read file; do #see above
-			if ! grep -q ${file} $dbNameTV; then
-				./parseTVfilename.sh $file
-			fi
+			if [ ! -f $dbNameTV ]; then #creates the dbfile if missing
+                            touch $dbNameTV;
+                        fi
+			fileName=${file#../}
+                        isPresent=$(grep -c "${fileName}" $dbNameTV)
+                        if [ "$isPresent" -eq "0" ]; then #check if file is already present in database
+                            ./parseTVfilename.sh $file	#parses through $file, adds it to database
+                        fi
 		done
 		wait $pid1;;
 	*)
