@@ -13,10 +13,10 @@ MoviesPath=../Movies/;
 case "${1}" in #switch case for the program's argument
 	"1")
 		#find all files that end in mp4 and executes parseMfilename.sh for every one of them, sequentially
-		find $MoviesPath -iname "*.mp4" -exec ./parseMfilename.sh {} \; 
+		find $MoviesPath  -not -path '*/.*/*' -not -name '.*' -iname "*.mp4" -exec ./parseMfilename.sh {} \; 
 		;;
 	"2")
-		find $TVpath -name "*.mp4"| sort | while read file; do #sorts filenames and iterates through them
+		find $TVpath -not -path '*/.*/*' -not -name '.*' -name "*.mp4"| sort | while read file; do #sorts filenames and iterates through them
                     if [ ! -f $dbNameTV ]; then #creates the dbfile if missing
                         touch $dbNameTV;
                     fi
@@ -28,9 +28,9 @@ case "${1}" in #switch case for the program's argument
 		done
 		;;
 	"3")
-		find $MoviesPath -iname "*.mp4" -exec ./parseMfilename.sh {} \; &
+		find $MoviesPath -not -path '*/.*/*' -not -name '.*' -iname "*.mp4" -exec ./parseMfilename.sh {} \; &
 		pid1=$!
-		find $TVpath -name "*.mp4"| sort | while read file; do #see above
+		find $TVpath -not -path '*/.*/*' -not -name '.*' -name "*.mp4"| sort | while read file; do #see above
 			if [ ! -f $dbNameTV ]; then #creates the dbfile if missing
                             touch $dbNameTV;
                         fi
